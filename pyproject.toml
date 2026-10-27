@@ -1,0 +1,52 @@
+[project]
+name = "python-ai-template"
+version = "0.1.0"
+description = "Python AI Pair Programming Template"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "ruff>=0.4.0",
+    "pyright>=1.1.360",
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.0",
+]
+
+# --- Ruff (Linter & Formatter) 設定 ---
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes (未使用インポート等)
+    "I",   # isort (インポート順序自動整理)
+    "UP",  # pyupgrade (最新のPython構文強制)
+    "B",   # flake8-bugbear (バグになりやすいパターンの検知)
+    "SIM", # flake8-simplify (コードの単純化)
+]
+ignore = [
+    "E501", # 行長制限の警告はフォーマッタに任せる
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# --- Pyright 設定 ---
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.11"
+typeCheckingMode = "standard"  # 最初は "standard"（実用的）。より厳格にしたい場合は "strict"
+reportMissingImports = true
+reportMissingTypeStubs = false # 型定義がない外部ライブラリの過剰警告を抑える
+
+# --- Pytest 設定 ---
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src"]

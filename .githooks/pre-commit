@@ -1,0 +1,19 @@
+#!/bin/sh
+echo "🔍 [Auto-Check] Running Pyright and Pytest before commit..."
+
+# 1. 型チェック
+uv run pyright
+if [ $? -ne 0 ]; then
+    echo "❌ Pyright failed. Commit aborted."
+    exit 1
+fi
+
+# 2. テスト
+uv run pytest
+if [ $? -ne 0 ]; then
+    echo "❌ Pytest failed. Commit aborted."
+    exit 1
+fi
+
+echo "✅ All checks passed!"
+exit 0
