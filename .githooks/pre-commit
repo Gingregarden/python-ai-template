@@ -27,6 +27,14 @@ if [ -n "$BRANCH_NAME" ]; then
 
 fi
 
+# .env の漏洩防止
+STAGED_ENV_FILES=$(git diff --cached --name-only | grep -E '^\.env(\..+)?$')
+if [ -n "$STAGED_ENV_FILES" ]; then
+    echo "❌ [Error] Attempting to commit environment file(s):"
+    echo "$STAGED_ENV_FILES"
+    echo "👉 Unstage before committing: git restore --staged .env*"
+    exit 1
+fi
 
 # Ruff による Lint & docstring 検証
 uv run ruff check --quiet
