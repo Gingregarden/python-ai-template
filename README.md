@@ -46,6 +46,7 @@ uv run python -m app.main
 2. **コミット前自動チェック**:
    - `.githooks/pre-commit`, `.githooks/commit-msg` を配置し、`git config core.hooksPath .githooks` を実行。
    - ※すでにフックツール（Huskyやpre-commit framework等）を使用している場合は、既存フック内に `uv run pyright` と `uv run pytest` を追記。
+   - ※macOS / Linux では chmod +x .githooks/* が必要な場合があります。
 3. **エディタ保存時自動整形**:
    - `.vscode/settings.json` の Ruff 関連設定を既存の設定ファイルにマージ。
    - `.vscode/extensions.json` の推奨拡張機能（Ruff, Pyright, Python）をマージ。
