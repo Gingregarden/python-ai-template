@@ -20,10 +20,11 @@
 - 全体テスト・型チェック・フォーマットは Git pre-commit フックで自動実行されるため、AIは原則実行しない（対象単体テストのみ許可）。
 - 外部パッケージをインストール（pip install）する前にかならずユーザーに指示を仰ぐこと。
 - プロジェクト外へのアクセス、およびプロジェクト内ファイルの物理削除・一括削除は禁止する。
+- コメントおよび docstring は日本語で書くこと。
 - インラインコメントには理由・制約・背景のみ書くこと。コードから自明な処理はコメントしないこと。
 - パブリックなモジュール・クラス・関数には必ず Google 形式の docstring を記述すること。型ヒントと重複する型情報は省略し、概要・制約・例外を明確にする。
 - ただしテストコードへの過剰な docstring は不要。テスト関数名（test_xxx）で意図を表現すること。
 
 ## 4. Git 運用
-- コミット規約（Conventional Commits: `feat|fix|refactor|test|docs|chore|spike: 要約`）を厳守する。
+- コミット規約（Conventional Commits: `feat|fix|refactor|test|docs|chore|spike: 日本語の要約`）を厳守する。
 - フィーチャーブランチ（`feat/*` 等）で作業し、指示があれば `gh pr create` で PR を作成する。
