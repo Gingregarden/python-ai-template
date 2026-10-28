@@ -26,5 +26,6 @@
 - ただしテストコードへの過剰な docstring は不要。テスト関数名（test_xxx）で意図を表現すること。
 
 ## 4. Git 運用
+- コミットやプッシュなどの Git 状態変更は、ユーザーから明示的な指示または承認があるまで自律実行してはならない。
 - コミット規約（Conventional Commits: `feat|fix|refactor|test|docs|chore|spike: 日本語の要約`）を厳守する。
 - フィーチャーブランチ（`feat/*` 等）で作業し、指示があれば `gh pr create` で PR を作成する。
