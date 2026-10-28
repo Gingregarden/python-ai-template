@@ -16,7 +16,7 @@ if echo "$MSG" | grep -Eq "$BYPASS_PATTERN"; then
     exit 0
 fi
 
-PATTERN="^(feat|fix|refactor|test|docs|chore|spike)(\(.*\))?: .+"
+PATTERN="^(feat|fix|refactor|test|docs|chore|spike)(\(.*\))?!?: .+"
 
 # 通常コミットの Conventional Commits 検証
 if ! echo "$MSG" | grep -Eq "$PATTERN"; then
