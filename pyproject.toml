@@ -62,11 +62,12 @@ reportMissingImports = true
 reportMissingTypeStubs = false # 型定義がない外部ライブラリの過剰警告を抑える
 reportMissingParameterType = true
 reportMissingTypeArgument = true
-reportUnknownParameterType = "warning"
+reportUnknownParameterType = "error"
 reportUnknownVariableType = "none" # 実装しやすさに応じて調整
 
 # --- Pytest 設定 ---
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope="function"
 testpaths = ["tests"]
 pythonpath = ["src"]
