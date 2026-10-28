@@ -13,13 +13,15 @@ AIペアプログラミング（Antigravity, Cursor, Claude Code, Copilot 等）
 GitHub の「Use this template」からリポジトリを作成後、以下を実行して開発を開始します。
 
 ### 1. 前提ツール
+
 - Python 3.11+
 - [uv](https://github.com/astral-sh/uv)
 - Git
 
-### 2. 環境の初期化（3ステップ）
+### 2. 環境の初期化
+
 ```bash
-# 1. 依存関係のインストール（仮想環境 .venv の自動作成）
+# 1. 依存関係のインストール（仮想環境 .venv の自動作成、パッケージのeditable登録）
 uv sync
 
 # 2. 環境変数ファイルの準備
@@ -28,17 +30,29 @@ cp .env.example .env
 # 3. Git フックの有効化（コミット前チェックの自動化）
 git config core.hooksPath .githooks
 
-# 4. パッケージ名のリネーム（任意）
-# src/app をお好みのパッケージ名（例: my_package ※アンダースコア推奨）に変更します
-mv src/app src/my_package
-# ※変更時は tests/test_smoke.py の import app.main も合わせて書き換えてください
+# 4. 開発用ブランチの作成
+git switch -c feat/initial-setup
 ```
 
-### 3. 実行確認
+### 3. パッケージ名のリネーム（任意）
+
+デフォルトのパッケージ名 `app` を変更する場合（例: `my_package`）：
+1. ディレクトリを変更: `mv src/app src/my_package`
+2. `pyproject.toml` の `name = "..."` をプロジェクト名に合わせて更新
+3. `pyproject.toml` の `[tool.hatch.build.targets.wheel]` の `packages = ["..."]` を更新
+4. `tests/test_smoke.py` のインポート文を `from my_package.main import main` に更新
+5. `uv sync` を再実行して仮想環境のeditableリンクを更新
+
+### 4. 実行確認
+
 ```bash
 # アプリケーションの実行
 uv run python -m app.main
 ```
+
+> [!TIP]
+> **非パッケージ（スタンドアロンアプリ）として運用する場合**
+> ビルドシステム不要なスクリプト集やバッチとして扱う場合は、`pyproject.toml` に `[tool.uv] package = false` を設定し、`.env` に `PYTHONPATH=src` を追記してください。
 
 ---
 

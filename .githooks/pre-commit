@@ -36,6 +36,11 @@ if [ -n "$STAGED_ENV_FILES" ]; then
     exit 1
 fi
 
+# uv コマンドの存在確認とフォールバック
+if ! command -v uv >/dev/null 2>&1; then
+    export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
+fi
+
 # Ruff による Lint & docstring 検証
 uv run ruff check --quiet
 if [ $? -ne 0 ]; then
