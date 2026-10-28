@@ -8,5 +8,5 @@
     }
   },
   "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
-  "pyright.disableLanguageServices": false
+  "python.terminal.useEnvFile": true
 }
