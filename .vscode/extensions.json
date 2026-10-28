@@ -1,7 +1,6 @@
 {
     "recommendations": [
         "charliermarsh.ruff",
-        "ms-pyright.pyright",
         "ms-python.python"
     ]
 }
