@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# プレフィックスを固定
+MSG=$(head -n 1 "$1")
+PATTERN="^(feat|fix|refactor|test|docs|chore|spike)(\(.*\))?: .+"
+if ! echo "$MSG" | grep -Eq "$PATTERN"; then
+    echo "❌ Invalid commit message format. Must match: prefix: summary"
+    echo "Allowed: feat, fix, refactor, test, docs, chore, spike"
+    exit 1
+fi

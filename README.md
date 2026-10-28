@@ -39,12 +39,12 @@ uv run python -m app.main
 
 ## 既存リポジトリへの導入（手動移植ガイド）
 
-既存プロジェクトに本テンプレートの「AIペアプロ環境」を安全に取り入れる場合は、自動スクリプトを使わず、以下の設定を既存環境に合わせて手動でマージしてください。
+既存プロジェクトに本テンプレートの「AIペアプロ環境」を安全に取り入れる場合は、以下の設定を既存環境に合わせて手動でマージしてください。
 
 1. **AI 行動規範**:
    - `AGENTS.md` をプロジェクト直下に配置（プロジェクトの事情に合わせて微調整）。
 2. **コミット前自動チェック**:
-   - `.githooks/pre-commit` を配置し、`git config core.hooksPath .githooks` を実行。
+   - `.githooks/pre-commit`, `.githooks/commit-msg` を配置し、`git config core.hooksPath .githooks` を実行。
    - ※すでにフックツール（Huskyやpre-commit framework等）を使用している場合は、既存フック内に `uv run pyright` と `uv run pytest` を追記。
 3. **エディタ保存時自動整形**:
    - `.vscode/settings.json` の Ruff 関連設定を既存の設定ファイルにマージ。

@@ -28,10 +28,26 @@ select = [
     "UP",  # pyupgrade (最新のPython構文強制)
     "B",   # flake8-bugbear (バグになりやすいパターンの検知)
     "SIM", # flake8-simplify (コードの単純化)
+    "D",   # pydocstyle（docstring検証を有効化）
 ]
 ignore = [
     "E501", # 行長制限の警告はフォーマッタに任せる
+    # docstringの過剰・冗長なルールは開発摩擦を生むため除外推奨
+    "D104", # 空の __init__.py での docstring 強制を除外
+    "D105", # マジックメソッド (__str__ 等) のdocstring強制を除外
+    "D107", # __init__ のdocstring強制を除外 (クラス側のdocstringで十分)
+    "D203", # 1行空行のスタイル競合回避 (D211と排他)
+    "D213", # 複数行docstringのスタイル競合回避 (D212と排他)
+    "D400", # 日本語docstring（句点「。」）での文末ピリオド警告を回避
+    "D415", # 日本語docstring（句点「。」）での文末ピリオド警告を回避
 ]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google" # "google", "numpy", "pep257" から選択可能 (Google形式が最も読みやすい)
+
+[tool.ruff.lint.per-file-ignores]
+# テストコードまでdocstringを必須にするとテスト作成の摩擦が激しいため除外する
+"tests/*" = ["D"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -44,6 +60,10 @@ pythonVersion = "3.11"
 typeCheckingMode = "standard"  # 最初は "standard"（実用的）。より厳格にしたい場合は "strict"
 reportMissingImports = true
 reportMissingTypeStubs = false # 型定義がない外部ライブラリの過剰警告を抑える
+reportMissingParameterType = true
+reportMissingTypeArgument = true
+reportUnknownParameterType = "warning"
+reportUnknownVariableType = "none" # 実装しやすさに応じて調整
 
 # --- Pytest 設定 ---
 [tool.pytest.ini_options]
