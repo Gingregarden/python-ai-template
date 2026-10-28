@@ -17,6 +17,7 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .pyright/
+.uv-cache/
 
 # OS・エディタ固有ファイル
 .DS_Store
