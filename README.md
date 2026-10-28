@@ -27,6 +27,11 @@ cp .env.example .env
 
 # 3. Git フックの有効化（コミット前チェックの自動化）
 git config core.hooksPath .githooks
+
+# 4. パッケージ名のリネーム（任意）
+# src/app をお好みのパッケージ名（例: my_package ※アンダースコア推奨）に変更します
+mv src/app src/my_package
+# ※変更時は tests/test_smoke.py の import app.main も合わせて書き換えてください
 ```
 
 ### 3. 実行確認
