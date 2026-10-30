@@ -71,4 +71,36 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# --- Frontend 検証 (frontend/ が存在する場合のみ実行) ---
+if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+    if [ ! -d "frontend/node_modules" ]; then
+        echo "❌ [Error] frontend/node_modules not found. Commit aborted."
+        echo "👉 Please install frontend dependencies first: cd frontend && npm install"
+        exit 1
+    fi
+
+    # Biome による Lint & フォーマット検証
+    npm --prefix frontend run --silent lint
+    if [ $? -ne 0 ]; then
+        echo "❌ Biome check (lint/format) failed. Commit aborted."
+        echo "👉 Fix with: npm --prefix frontend run format"
+        exit 1
+    fi
+
+    # TypeScript 型チェック
+    TSC_OUTPUT=$(npm --prefix frontend run --silent typecheck 2>&1)
+    if [ $? -ne 0 ]; then
+        echo "$TSC_OUTPUT"
+        echo "❌ TypeScript typecheck (tsc --noEmit) failed. Commit aborted."
+        exit 1
+    fi
+
+    # Vitest 単体テスト
+    npm --prefix frontend run --silent test
+    if [ $? -ne 0 ]; then
+        echo "❌ Vitest unit tests failed. Commit aborted."
+        exit 1
+    fi
+fi
+
 exit 0

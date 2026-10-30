@@ -1,7 +1,7 @@
 [project]
-name = "python-ai-template"
+name = "ai-template"
 version = "0.1.0"
-description = "Python AI Pair Programming Template"
+description = "Full-stack AI Pair Programming Template (Python & TypeScript)"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = []

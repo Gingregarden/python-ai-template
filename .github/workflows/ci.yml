@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  check:
-    name: Lint, Type Check & Test
+  check-backend:
+    name: Backend (Ruff, Pyright & Pytest)
     runs-on: ubuntu-latest
 
     steps:
@@ -42,3 +42,61 @@ jobs:
 
       - name: Run tests (Pytest)
         run: uv run pytest
+
+  check-frontend:
+    name: Frontend (Biome, tsc, Vitest & Playwright)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if frontend exists
+        id: check_frontend
+        run: |
+          if [ -f "frontend/package.json" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Node.js
+        if: steps.check_frontend.outputs.exists == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        if: steps.check_frontend.outputs.exists == 'true'
+        working-directory: frontend
+        run: |
+          if [ -f "package-lock.json" ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Lint & Format check (Biome)
+        if: steps.check_frontend.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Type check (tsc)
+        if: steps.check_frontend.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Run unit tests (Vitest)
+        if: steps.check_frontend.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm run test
+
+      - name: Install Playwright browsers
+        if: steps.check_frontend.outputs.exists == 'true'
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests (Playwright)
+        if: steps.check_frontend.outputs.exists == 'true'
+        working-directory: frontend
+        run: npm run test:e2e
