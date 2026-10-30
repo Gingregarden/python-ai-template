@@ -1,0 +1,30 @@
+default:
+  # Python 3.11 と uv が最初から同梱されている公式軽量イメージ
+  image: ghcr.io/astral-sh/uv:python3.11-bookworm-slim
+
+variables:
+  # キャッシュ先をプロジェクト配下に指定（GitLab Runner で永続化するため）
+  UV_CACHE_DIR: "$CI_PROJECT_DIR/.uv-cache"
+
+stages:
+  - test
+
+# ブランチごとにキャッシュを保持して2回目以降を高速化
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .uv-cache/
+
+check:
+  stage: test
+  rules:
+    # マージリクエスト（MR）作成時、およびデフォルトブランチ（main等）への反映時のみ実行
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  before_script:
+    - uv sync --locked
+  script:
+    - uv run ruff check
+    - uv run ruff format --check
+    - uv run pyright
+    - uv run pytest

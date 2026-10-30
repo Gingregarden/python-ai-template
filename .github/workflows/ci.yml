@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+# 連続プッシュ時に古い実行を自動キャンセルしてリソースを節約
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, Type Check & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+          python-version: "3.11"
+
+      - name: Install dependencies
+        # --locked を付与することで、pyproject.toml と uv.lock の整合性も検証
+        run: uv sync --locked
+
+      - name: Lint check (Ruff)
+        run: uv run ruff check
+
+      - name: Format check (Ruff)
+        run: uv run ruff format --check
+
+      - name: Type check (Pyright)
+        run: uv run pyright
+
+      - name: Run tests (Pytest)
+        run: uv run pytest

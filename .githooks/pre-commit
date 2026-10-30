@@ -1,0 +1,74 @@
+#!/bin/sh
+
+BRANCH_NAME=$(git branch --show-current)
+
+# ブランチが存在する場合のみ、ブランチ名の検証を行う
+if [ -n "$BRANCH_NAME" ]; then
+
+    # main / master への直接コミットを禁止
+    if [ "$BRANCH_NAME" = "main" ] || [ "$BRANCH_NAME" = "master" ]; then
+        echo "❌ [Error] Direct commits to '$BRANCH_NAME' branch are prohibited!"
+        echo "👉 Please create a feature branch: git switch -c feat/your-feature-name"
+        exit 1
+    fi
+
+    # 命名プレフィックスの検証
+    # 許可する形式: feat/*, fix/*, refactor/*, test/*, docs/*, chore/*, spike/*
+    VALID_BRANCH_REGEX="^(feat|fix|refactor|test|docs|chore|spike)/[a-z0-9._-]+$"
+
+    if ! echo "$BRANCH_NAME" | grep -Eq "$VALID_BRANCH_REGEX"; then
+        echo "❌ [Error] Invalid branch name: '$BRANCH_NAME'"
+        echo "👉 Branch name must follow the pattern: <prefix>/<kebab-case-name>"
+        echo "   Allowed prefixes: feat/, fix/, refactor/, test/, docs/, chore/, spike/"
+        echo "   Example: feat/user-auth, fix/issue-123"
+        echo "💡 Rename current branch with: git branch -m feat/your-feature-name"
+        exit 1
+    fi
+
+fi
+
+# .env の漏洩防止
+STAGED_ENV_FILES=$(git diff --cached --name-only | grep -E '(^|/)\.env(\..+)?$' | grep -vE '\.env\.(example|sample)$')
+if [ -n "$STAGED_ENV_FILES" ]; then
+    echo "❌ [Error] Attempting to commit environment file(s):"
+    echo "$STAGED_ENV_FILES"
+    echo "👉 Unstage before committing: git restore --staged .env*"
+    exit 1
+fi
+
+# uv コマンドの存在確認とフォールバック
+if ! command -v uv >/dev/null 2>&1; then
+    export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
+fi
+
+# Ruff による Lint & docstring 検証
+uv run ruff check --quiet
+if [ $? -ne 0 ]; then
+    echo "❌ Ruff lint/docstring check failed. Commit aborted."
+    exit 1
+fi
+
+# Ruff によるフォーマット検証
+uv run ruff format --check
+if [ $? -ne 0 ]; then
+    echo "❌ Ruff format check failed. Commit aborted."
+    echo "👉 Fix with: uv run ruff format"
+    exit 1
+fi
+
+# 型チェック
+PYRIGHT_OUTPUT=$(uv run pyright 2>&1)
+if [ $? -ne 0 ]; then
+    echo "$PYRIGHT_OUTPUT"
+    echo "❌ Pyright failed. Commit aborted."
+    exit 1
+fi
+
+# テスト
+uv run pytest
+if [ $? -ne 0 ]; then
+    echo "❌ Pytest failed. Commit aborted."
+    exit 1
+fi
+
+exit 0

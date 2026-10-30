@@ -1,0 +1,28 @@
+#!/bin/sh
+
+COMMIT_MSG_FILE="$1"
+COMMIT_SOURCE="$2"
+
+# マージコミットやスカッシュコミットは検証をバイパス
+if [ "$COMMIT_SOURCE" = "merge" ] || [ "$COMMIT_SOURCE" = "squash" ]; then
+    exit 0
+fi
+
+MSG=$(head -n 1 "$COMMIT_MSG_FILE")
+
+# 自動生成されるコミット（Revert, Merge, fixup! 等）も検証をバイパス
+BYPASS_PATTERN="^(Merge |Revert \"|fixup! |squash! )"
+if echo "$MSG" | grep -Eq "$BYPASS_PATTERN"; then
+    exit 0
+fi
+
+PATTERN="^(feat|fix|refactor|test|docs|chore|spike)(\(.*\))?!?: .+"
+
+# 通常コミットの Conventional Commits 検証
+if ! echo "$MSG" | grep -Eq "$PATTERN"; then
+    echo "❌ Invalid commit message format. Must match: prefix: summary"
+    echo "Allowed: feat, fix, refactor, test, docs, chore, spike"
+    exit 1
+fi
+
+exit 0
